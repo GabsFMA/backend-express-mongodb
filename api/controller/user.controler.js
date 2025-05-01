@@ -1,61 +1,39 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import userService from '../service/user.service.js';
 
-    const register = async(req, res) => {
-        console.log("Registering user:", req.body);
+const register = async (req, res) => {
+    console.log("Registering user:", req.body);
 
-        if(!req.body || !req.body.username || !req.body.password || !req.body.email) {
-            return res.status(400).send({message: 'Username and password are required'});
-        }
+    const { username, email, password } = req.body;
 
-        const {username, password, email} = req.body;
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        try{
-            const savedUser = await User.create({
-                username,
-                email, 
-                password: hashedPassword
-            });
-            console.log("Saved user:", savedUser);
-            return res.status(200).json({message: 'User registered successfully', user: savedUser});
-        } catch(error){
-            console.error("Error saving user:", error);
-            return res.status(500).send({message: 'Error saving user'});
-        }
-    };
-
-    const login = async(req, res) => {
-        console.log("Logging in user:", req.body);
-
-        if(!req.body || !req.body.username || !req.body.password) {
-            return res.status(400).send({message: 'Username and password are required'});
-        }
-
-        const {username, password} = req.body;
-
-        try{
-            const user = await User.findOne({username}).select('+password');
-            if(!user){
-                console.error("User not found:", username);
-                return res.status(404).send({message: 'User not found'});
-            }
-
-            const isMatch = await bcrypt.compare(password, user.password);
-            console.log("Password match:", isMatch);
-            if(!isMatch){
-                return res.status(400).send({message: 'Invalid credentials'});
-            }
-            console.log("User logged in sucessfully:", user.username);
-            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '1h'});
-            return res.status(200).json({message: 'Login successful', token});
-        } catch(error){
-            console.error("Error logging in user:", error);
-            return res.status(500).send({message: 'Error logging in user'});
-        }
+    if (!username || !email || !password) {
+        return res.status(400).send({ message: 'Username, email, and password are required' });
     }
 
-export default {register, login}
+    try {
+        const newUser = await userService.registerUser({ username, email, password });
+        return res.status(201).json({ message: 'User registered successfully', user: newUser });
+    } catch (error) {
+        console.error("Error registering user:", error.message);
+        return res.status(400).send({ message: error.message });
+    }
+};
+
+const login = async (req, res) => {
+    console.log("Logging in user:", req.body);
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).send({ message: 'Email and password are required' });
+    }
+
+    try {
+        const { token, user } = await userService.loginUser({ email, password });
+        return res.status(200).json({ message: 'Login successful', token, user });
+    } catch (error) {
+        console.error("Error logging in user:", error.message);
+        return res.status(400).send({ message: error.message });
+    }
+};
+
+export default { register, login };
