@@ -1,13 +1,15 @@
 import userService from '../service/user.service.js';
+import { validationResult } from 'express-validator';
 
 const register = async (req, res) => {
     console.log("Registering user:", req.body);
 
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-        return res.status(400).send({ message: 'Username, email, and password are required' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
+
+    const { username, email, password } = req.body;
 
     try {
         const newUser = await userService.registerUser({ username, email, password });
@@ -21,11 +23,12 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     console.log("Logging in user:", req.body);
 
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).send({ message: 'Email and password are required' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
     }
+
+    const { email, password } = req.body;
 
     try {
         const { token, user } = await userService.loginUser({ email, password });
