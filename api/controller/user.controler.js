@@ -1,30 +1,39 @@
-import bcrypt from 'bcrypt';
-import User from '../models/User.js';
+import userService from '../service/user.service.js';
 
-    const register = async(req, res) => {
-        console.log("Registering user:", req.body);
+const register = async (req, res) => {
+    console.log("Registering user:", req.body);
 
-        if(!req.body || !req.body.username || !req.body.password || !req.body.email) {
-            return res.status(400).send({message: 'Username and password are required'});
-        }
+    const { username, email, password } = req.body;
 
-        const {username, password, email} = req.body;
+    if (!username || !email || !password) {
+        return res.status(400).send({ message: 'Username, email, and password are required' });
+    }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+    try {
+        const newUser = await userService.registerUser({ username, email, password });
+        return res.status(201).json({ message: 'User registered successfully', user: newUser });
+    } catch (error) {
+        console.error("Error registering user:", error.message);
+        return res.status(400).send({ message: error.message });
+    }
+};
 
-        try{
-            const savedUser = await User.create({
-                username,
-                email, 
-                password: hashedPassword
-            });
-            console.log("Saved user:", savedUser);
-            return res.status(200).json({message: 'User registered successfully', user: savedUser});
-        } catch(error){
-            console.error("Error saving user:", error);
-            return res.status(500).send({message: 'Error saving user'});
-        }
-    };
+const login = async (req, res) => {
+    console.log("Logging in user:", req.body);
 
-export default {register}
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).send({ message: 'Email and password are required' });
+    }
+
+    try {
+        const { token, user } = await userService.loginUser({ email, password });
+        return res.status(200).json({ message: 'Login successful', token, user });
+    } catch (error) {
+        console.error("Error logging in user:", error.message);
+        return res.status(400).send({ message: error.message });
+    }
+};
+
+export default { register, login };
