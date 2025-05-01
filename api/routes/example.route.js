@@ -6,4 +6,8 @@ const router = express.Router();
 
 router.get("/verifyToken", verifyToken, exampleController.securedExempleProcess);
 
+router.get("/protected", verifyToken, (req, res) => {
+    res.status(200).send({ message: "Protected route accessed successfully" });
+})
+
 export default router;
