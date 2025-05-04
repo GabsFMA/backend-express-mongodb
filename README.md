@@ -97,7 +97,7 @@ A pasta `requests/` contém scripts `.sh` com comandos `curl` para testar a API.
 
 ## 🌐 Hospedagem
 
-A aplicação está disponível em ambiente de produção via [Vercel](https://backend-express-mongodb-rc6xdmg9j.vercel.app).
+A aplicação está disponível em ambiente de produção via [Vercel](https://backend-express-mongodb-one.vercel.app).
 
 ---
 
