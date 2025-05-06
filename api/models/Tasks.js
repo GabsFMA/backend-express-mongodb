@@ -8,11 +8,11 @@ const TaskSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      completed: {
-        type: Boolean,
-        default: false,
-      },
       required: true,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -25,6 +25,6 @@ const TaskSchema = new mongoose.Schema(
   }
 );
 
-const Tasks = mongoose.model("User", userSchema);
+const Tasks = mongoose.model("Task", TaskSchema);
 
 export default Tasks;
