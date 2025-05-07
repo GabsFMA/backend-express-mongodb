@@ -1,8 +1,8 @@
-import taskService from '../services/task.service.js';
+import taskService from '../service/task.service.js';
 
 const createTask = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const { title, description } = req.body;
 
     const newTask = await taskService.createTask({ title, description }, userId);
@@ -15,7 +15,7 @@ const createTask = async (req, res) => {
 
 const getAllTasks = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const tasks = await taskService.getAllTasks(userId);
     return res.status(200).json(tasks);
   } catch (error) {
@@ -26,7 +26,7 @@ const getAllTasks = async (req, res) => {
 
 const getTaskById = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const taskId = req.params.id;
 
     const task = await taskService.getTasksById(taskId, userId);
@@ -39,7 +39,7 @@ const getTaskById = async (req, res) => {
 
 const updateTask = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const taskId = req.params.id;
     const data = req.body;
 
@@ -53,7 +53,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const taskId = req.params.id;
 
     const deletedTask = await taskService.deleteTask(taskId, userId);
