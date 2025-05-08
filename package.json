@@ -2,10 +2,10 @@
   "name": "backend-express-mongodb",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "apis/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon api/index.js",
+    "dev": "nodemon apis/index.js",
     "start": "docker compose up -d",
     "generate-secret-key": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
   },
