@@ -51,6 +51,19 @@ const updateTask = async (req, res) => {
   }
 };
 
+export const updateTaskPartially = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updates = req.body;
+
+    try {
+        const updatedTask = await taskService.updateTaskPartially(id, userId, updates);
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 const deleteTask = async (req, res) => {
   try {
     const userId = req.userId;
@@ -64,4 +77,4 @@ const deleteTask = async (req, res) => {
   }
 };
 
-export default {createTask, getAllTasks, getTaskById, updateTask, deleteTask};
+export default {createTask, getAllTasks, getTaskById, updateTask, updateTaskPartially, deleteTask};

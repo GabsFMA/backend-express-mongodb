@@ -36,6 +36,17 @@ const updateTask = async (taskId, userId, data) => {
     return task;
 };
 
+const updateTaskPartially = async (taskId, userId, data) => {
+    const task = await Tasks.findOneAndUpdate(
+        { _id: taskId, userId }, 
+        { $set: data }, 
+        { new: true, runValidators: true } 
+    );
+    if (!task) throw new Error("Task not found or unauthorized");
+    console.log(`[${new Date().toISOString()}] Partially updated task: ${taskId} for user ${userId}`);
+    return task;
+};
+
 const deleteTask = async (taskId, userId) => {
     const task = await Tasks.findOneAndDelete({ _id: taskId, userId });
     if (!task) throw new Error("Task not found or unauthorized");
@@ -48,5 +59,6 @@ export default {
     getAllTasks,
     getTasksById,
     updateTask,
+    updateTaskPartially,
     deleteTask,
 };

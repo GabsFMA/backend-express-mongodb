@@ -45,6 +45,24 @@ router.put(
     ],
     taskController.updateTask
   );
+  router.patch(
+    '/:id',
+    [
+      param('id').isMongoId().withMessage('Invalid Task ID'),
+      body('title')
+        .optional()
+        .isString().withMessage('Title must be a string')
+        .isLength({ max: 100 }).withMessage('Title must not exceed 100 characters'),
+      body('description')
+        .optional()
+        .isString().withMessage('Description must be a string')
+        .isLength({ max: 500 }).withMessage('Description must not exceed 500 characters'),
+      body('completed')
+        .optional()
+        .isBoolean().withMessage('Completed must be a boolean'),
+    ],
+    taskController.updateTaskPartially
+);
 router.delete('/:id', taskController.deleteTask);
 
 export default router;
