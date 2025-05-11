@@ -17,6 +17,9 @@ backend-express-mongodb/
 │   ├── routes/
 │   └── service/
 ├── requests/
+│   ├── protected/
+│   │── tasks/
+│   └── user/
 ├── .env.example
 ├── docker-compose.yml
 ├── package.json
@@ -32,9 +35,24 @@ backend-express-mongodb/
 - `POST /register` – Criação de novo usuário.
 - `POST /login` – Autenticação e geração de token JWT.
 
-### 🔐 Rotas Protegidas (JWT necessário)
+### 🔐 Rotas Protegidas (JWT necessário no header `Authorization`)
 
-- `GET /protected` – Retorna mensagem de acesso autorizado, disponível apenas com token válido no header `Authorization`.
+#### ✅ Usuário
+
+- `GET /protected` – Verifica se o token JWT é válido.
+
+#### ✅ Tarefas (Tasks)
+
+| Método | Rota              | Descrição                              |
+|--------|-------------------|----------------------------------------|
+| POST   | `/tasks`          | Cria nova tarefa para o usuário logado |
+| GET    | `/tasks`          | Retorna todas as tarefas do usuário    |
+| GET    | `/tasks/:id`      | Retorna uma tarefa específica          |
+| PUT    | `/tasks/:id`      | Atualiza totalmente uma tarefa         |
+| PATCH  | `/tasks/:id`      | Atualiza parcialmente uma tarefa       |
+| DELETE | `/tasks/:id`      | Remove uma tarefa                      |
+
+**Validações**: todos os campos passam por validações com `express-validator`.
 
 ---
 
@@ -45,6 +63,17 @@ backend-express-mongodb/
   name: String,       // obrigatório
   email: String,      // obrigatório, único
   password: String    // obrigatório, armazenado como hash (não selecionável)
+}
+```
+
+## 📋 Modelo de Tarefa
+
+```js
+{
+  title: String,        // obrigatório, máx. 100 caracteres
+  description: String,  // obrigatório, máx. 500 caracteres
+  completed: Boolean,   // opcional, padrão false
+  userId: ObjectId      // obrigatório, referencia o usuário
 }
 ```
 
@@ -72,26 +101,24 @@ npm run generate-secret-key  # Gera chave secreta JWT aleatória
 
 A pasta `requests/` contém scripts `.sh` com comandos `curl` para testar a API. Exemplos incluídos:
 
-### ✅ Registro
+### 📂 Registro e Login
 
-- `POST_Register_User.sh` – Registro bem-sucedido
-- `POST_Register_User_Error_Email_Repeated.sh` – E-mail já existente
-- `POST_Register_User_Error_Invalid_Email.sh` – E-mail inválido
-- `POST_Register_User_Error_Invalid_Password.sh` – Senha inválida
-- `POST_Register_User_Error_Bad_Request.sh` – Requisição mal formatada
+- `POST_Register_User.sh`
+- `POST_Login_User.sh`
+- ...e variações com erros esperados
 
-### ✅ Login
+### 📂 Rota Protegida
 
-- `POST_Login_User.sh` – Login bem-sucedido
-- `POST_Login_User_Error_Invalid_Email.sh` – E-mail inválido
-- `POST_Login_User_Error_Invalid_Password.sh` – Senha inválida
-- `POST_Login_User_Error_Bad_Request.sh` – Requisição mal formatada
+- `GET_Protected_Valid_Token.sh`
+- `GET_Protected_No_Token.sh`
+- `GET_Protected_Invalid_Token.sh`
 
-### ✅ Rota Protegida
+### 📂 Tarefas (JWT obrigatório)
 
-- `GET_Protected_Valid_Token.sh` – Acesso com token válido
-- `GET_Protected_No_Token.sh` – Sem token
-- `GET_Protected_Invalid_Token.sh` – Token inválido
+- `POST_Create_Task.sh`
+- `GET_All_User_Tasks.sh`
+- `PUT_Update_Task.sh`
+- `DELETE_Task.sh`
 
 ---
 
@@ -105,7 +132,9 @@ A aplicação está disponível em ambiente de produção via [Vercel](https://b
 
 Assista à demonstração da aplicação funcionando localmente e em produção, com os testes sendo executados via terminal:
 
-🔗 [Clique aqui para assistir ao vídeo](https://youtu.be/7AEkXUgWPQc) <!-- Substitua com o link real -->
+🔗 [Clique aqui para assistir ao vídeo](https://youtu.be/7AEkXUgWPQc)
+
+🔗 [Clique aqui para assistir ao vídeo da nova funcionalidade de tarefas](https://youtu.be/19tDHZMzjKI)
 
 ---
 
@@ -119,7 +148,8 @@ Assista à demonstração da aplicação funcionando localmente e em produção,
 - **Dotenv**
 - **Docker**
 - **Curl**
+- **express-validator**
 
 ---
 
-🧑‍💻 Desenvolvido como atividade prática de backend com autenticação e persistência de dados no MongoDB.
+🧑‍💻 Desenvolvido como atividade prática de backend com autenticação, persistência de dados no MongoDB e operações protegidas por JWT.
