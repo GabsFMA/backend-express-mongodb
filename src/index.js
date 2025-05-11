@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import db from './database/configdb.js'
 import UserRoute from './routes/user.route.js'
 import ExampleRoute from './routes/example.route.js';
+import TaskRouter from './routes/task.route.js';
 
 dotenv.config();
 db.connect();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use("/users", UserRoute);
 app.use("/secureExampleRoute", ExampleRoute);
+app.use("/tasks", TaskRouter);
 
 app.get('/', (req, res) => {
     res.send({message: 'Olá mundo'});
