@@ -3,6 +3,5 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --header "Authorization: Bearer " \
   --data '{
-    "title": "Minha primeira tarefa",
-    "description": "Criando tarefa autenticada"
+    "Invalido": "Deveras",
   }'
