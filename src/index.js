@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import db from './database/configdb.js'
 import UserRoute from './routes/user.route.js'
 import ExampleRoute from './routes/example.route.js';
@@ -10,6 +11,7 @@ db.connect();
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/users", UserRoute);
